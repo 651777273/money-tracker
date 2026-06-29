@@ -131,7 +131,7 @@ export function MoneyTracker() {
         <div>
           <p className="text-sm font-medium text-mint dark:text-emerald-300">个人财务追踪</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-normal text-ink dark:text-white sm:text-4xl">
-            Money Tracker
+            记账追踪
           </h1>
         </div>
         <button
