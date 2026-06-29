@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(15, 159, 110, 0.12), transparent 30rem),
+    linear-gradient(135deg, #f7f7f4 0%, #eef4f0 45%, #f5f1ec 100%);
+  color: #172033;
+}
+
+.dark body {
+  background:
+    radial-gradient(circle at top left, rgba(82, 214, 164, 0.12), transparent 30rem),
+    linear-gradient(135deg, #101522 0%, #161c2a 50%, #12151f 100%);
+  color: #f3f6f4;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
