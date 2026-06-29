@@ -30,6 +30,8 @@ const currency = new Intl.NumberFormat("zh-CN", {
   currency: "CNY"
 });
 
+const chartColors = ["#df3f45", "#f59e0b", "#0f9f6e", "#3b82f6", "#8b5cf6", "#14b8a6", "#f97316", "#64748b"];
+
 const today = new Date().toISOString().slice(0, 10);
 
 export function MoneyTracker() {
@@ -118,7 +120,27 @@ export function MoneyTracker() {
       datasets: [
         {
           data: Object.values(byCategory),
-          backgroundColor: ["#df3f45", "#f59e0b", "#0f9f6e", "#3b82f6", "#8b5cf6", "#14b8a6", "#f97316", "#64748b"],
+          backgroundColor: chartColors,
+          borderWidth: 0
+        }
+      ]
+    };
+  }, [records]);
+
+  const incomeChart = useMemo(() => {
+    const byCategory = records
+      .filter((record) => record.type === "income")
+      .reduce<Record<string, number>>((summary, record) => {
+        summary[record.category] = (summary[record.category] ?? 0) + record.amount;
+        return summary;
+      }, {});
+
+    return {
+      labels: Object.keys(byCategory),
+      datasets: [
+        {
+          data: Object.values(byCategory),
+          backgroundColor: chartColors,
           borderWidth: 0
         }
       ]
@@ -284,35 +306,61 @@ export function MoneyTracker() {
         </section>
       </section>
 
-      <section className="rounded-lg border border-white/70 bg-white/85 p-5 shadow-soft backdrop-blur dark:border-slate-800 dark:bg-slate-900/85">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold text-ink dark:text-white">支出类别比例</h2>
-        </div>
-        <div className="mx-auto mt-4 h-72 max-w-xl">
-          {expenseChart.labels.length > 0 ? (
-            <Doughnut
-              data={expenseChart}
-              options={{
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    position: "bottom",
-                    labels: {
-                      color: darkMode ? "#e2e8f0" : "#334155",
-                      usePointStyle: true
-                    }
-                  }
-                }
-              }}
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-slate-300 text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
-              添加支出后会显示图表
-            </div>
-          )}
-        </div>
+      <section className="grid gap-6 lg:grid-cols-2">
+        <CategoryChart title="支出类别比例" emptyText="添加支出后会显示图表" data={expenseChart} darkMode={darkMode} />
+        <CategoryChart title="收入类别比例" emptyText="添加收入后会显示图表" data={incomeChart} darkMode={darkMode} />
       </section>
     </main>
+  );
+}
+
+function CategoryChart({
+  title,
+  emptyText,
+  data,
+  darkMode
+}: {
+  title: string;
+  emptyText: string;
+  data: {
+    labels: string[];
+    datasets: {
+      data: number[];
+      backgroundColor: string[];
+      borderWidth: number;
+    }[];
+  };
+  darkMode: boolean;
+}) {
+  return (
+    <section className="rounded-lg border border-white/70 bg-white/85 p-5 shadow-soft backdrop-blur dark:border-slate-800 dark:bg-slate-900/85">
+      <div className="flex items-center justify-between gap-4">
+        <h2 className="text-lg font-semibold text-ink dark:text-white">{title}</h2>
+      </div>
+      <div className="mx-auto mt-4 h-72 max-w-xl">
+        {data.labels.length > 0 ? (
+          <Doughnut
+            data={data}
+            options={{
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: "bottom",
+                  labels: {
+                    color: darkMode ? "#e2e8f0" : "#334155",
+                    usePointStyle: true
+                  }
+                }
+              }
+            }}
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-slate-300 text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
+            {emptyText}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
 
